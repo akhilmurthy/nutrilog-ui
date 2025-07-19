@@ -1,26 +1,28 @@
-import { Image, StyleSheet, View } from "react-native";
+import {Image, StyleSheet, View} from 'react-native';
+import {Text} from 'react-native-paper';
+import logoImage from '../assets/images/logo.png';
 
 export default function AuthHeader() {
   return (
     <View style={styles.header}>
-      <Image
-        source={{
-          uri: "https://firebase.google.com/downloads/brand-guidelines/PNG/logo-vertical.png",
-        }}
-        style={styles.logo}
-        resizeMode="contain"
-      />
+      <Image source={logoImage} style={styles.logo} resizeMode="contain" />
+      <Text style={styles.appName}>NutriLog</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   header: {
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: 32,
   },
   logo: {
     width: 120,
     height: 120,
+  },
+  appName: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#eef3e0',
   },
 });
