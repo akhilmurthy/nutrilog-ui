@@ -1,18 +1,29 @@
-import { getApps, initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import {getApps, initializeApp} from 'firebase/app';
+import {getAuth} from 'firebase/auth';
+import Constants from 'expo-constants';
+
+const {
+  FIREBASE_API_KEY,
+  FIREBASE_AUTH_DOMAIN,
+  FIREBASE_PROJECT_ID,
+  FIREBASE_STORAGE_BUCKET,
+  FIREBASE_MESSAGING_SENDER_ID,
+  FIREBASE_APP_ID,
+  MEASUREMENT_ID,
+} = Constants.expoConfig?.extra || {};
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBcsX7LY-bIRje_phakKegEizhx-cBMtfY",
-  authDomain: "nutrilog-429617.firebaseapp.com",
-  projectId: "nutrilog-429617",
-  storageBucket: "nutrilog-429617.appspot.com",
-  messagingSenderId: "519579342149",
-  appId: "1:519579342149:web:263121036ddfeed30c1a2c",
-  measurementId: "G-C81F8W7R6W",
+  apiKey: FIREBASE_API_KEY,
+  authDomain: FIREBASE_AUTH_DOMAIN,
+  projectId: FIREBASE_PROJECT_ID,
+  storageBucket: FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
+  appId: FIREBASE_APP_ID,
+  measurementId: MEASUREMENT_ID,
 };
 
 const app =
   getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
 
-export { app, auth };
+export {app, auth};
