@@ -1,6 +1,6 @@
 import {Image, StyleSheet, View} from 'react-native';
 import {Text} from 'react-native-paper';
-import logoImage from '../assets/images/logo.png';
+import logoImage from '../../assets/images/logo.png';
 
 export default function AuthHeader() {
   return (

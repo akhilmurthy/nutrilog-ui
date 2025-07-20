@@ -1,15 +1,15 @@
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Redirect, Tabs } from "expo-router";
 import { useAuth } from "../../context/AuthContext";
 
 export default function TabsLayout() {
   const { token } = useAuth();
-
   if (!token) return <Redirect href="/(auth)/login" />;
 
   return (
     <Tabs
-      screenOptions={({ route }) => ({
+      initialRouteName="dashboard"
+      screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: {
@@ -22,26 +22,56 @@ export default function TabsLayout() {
           shadowOffset: { width: 0, height: -2 },
           shadowRadius: 10,
         },
-        tabBarIcon: ({ color, size, focused }) => {
-          let iconName = "home";
-          switch (route.name) {
-            case "home":
-              iconName = "home";
-              break;
-            case "settings":
-              iconName = "settings";
-              break;
-          }
-
-          return (
+      }}
+    >
+      <Tabs.Screen
+        name="dashboard"
+        options={{
+          tabBarIcon: ({ focused, size }) => (
             <MaterialIcons
-              name={iconName as any}
+              name="dashboard"
               size={focused ? 28 : 24}
               color={focused ? "#007AFF" : "#999"}
             />
-          );
-        },
-      })}
-    />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="diary"
+        options={{
+          tabBarIcon: ({ focused, size }) => (
+            <MaterialCommunityIcons
+              name="notebook"
+              size={focused ? 28 : 24}
+              color={focused ? "#007AFF" : "#999"}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="progress"
+        options={{
+          tabBarIcon: ({ focused, size }) => (
+            <MaterialIcons
+              name="insights"
+              size={focused ? 28 : 24}
+              color={focused ? "#007AFF" : "#999"}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          tabBarIcon: ({ focused, size }) => (
+            <MaterialIcons
+              name="settings"
+              size={focused ? 28 : 24}
+              color={focused ? "#007AFF" : "#999"}
+            />
+          ),
+        }}
+      />
+    </Tabs>
   );
 }

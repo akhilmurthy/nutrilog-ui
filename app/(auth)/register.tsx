@@ -8,9 +8,9 @@ import {useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {Button, Text, useTheme} from 'react-native-paper';
 
-import AuthHeader from '../../components/AuthHeader';
-import AuthInput from '../../components/AuthInput';
-import AuthLayout from '../../components/AuthLayout';
+import AuthHeader from '../../components/auth/AuthHeader';
+import AuthInput from '../../components/auth/AuthInput';
+import AuthLayout from '../../components/auth/AuthLayout';
 import {useAuth} from '../../context/AuthContext';
 import {app} from '../../lib/firebase';
 
@@ -38,7 +38,7 @@ export default function Register() {
 
       const token = await userCred.user.getIdToken();
       await signIn(token);
-      router.replace('/');
+      router.replace('/dashboard');
     } catch (err) {
       console.error('Registration failed:', err);
     }
