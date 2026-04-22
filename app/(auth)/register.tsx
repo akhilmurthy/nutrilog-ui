@@ -1,7 +1,6 @@
 import {useRouter} from 'expo-router';
 import {
   createUserWithEmailAndPassword,
-  getAuth,
   updateProfile,
 } from 'firebase/auth';
 import {useState} from 'react';
@@ -12,7 +11,7 @@ import AuthHeader from '../../components/auth/AuthHeader';
 import AuthInput from '../../components/auth/AuthInput';
 import AuthLayout from '../../components/auth/AuthLayout';
 import {useAuth} from '../../context/AuthContext';
-import {app} from '../../lib/firebase';
+import {auth} from '../../lib/firebase';
 
 export default function Register() {
   const {signIn} = useAuth();
@@ -25,7 +24,6 @@ export default function Register() {
 
   const handleRegister = async () => {
     try {
-      const auth = getAuth(app);
       const userCred = await createUserWithEmailAndPassword(
         auth,
         email,

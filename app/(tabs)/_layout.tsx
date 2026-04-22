@@ -2,8 +2,23 @@ import {MaterialIcons, MaterialCommunityIcons} from '@expo/vector-icons';
 import {Redirect, Tabs} from 'expo-router';
 import {useAuth} from '../../context/AuthContext';
 
+// App Theme Colors
+const COLORS = {
+  background: '#0c371e',
+  surface: '#164a2e',
+  primary: '#FF6F00',
+  text: '#eef3e0',
+  textSecondary: '#a8b99a',
+  border: '#2d5a3f',
+};
+
 export default function TabsLayout() {
-  const {token} = useAuth();
+  const {token, loading} = useAuth();
+
+  if (loading) {
+    return null;
+  }
+
   if (!token) {
     return <Redirect href="/(auth)/login" />;
   }
@@ -12,63 +27,56 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarShowLabel: false,
+        tabBarShowLabel: true,
+        tabBarActiveTintColor: COLORS.primary,
+        tabBarInactiveTintColor: COLORS.textSecondary,
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontWeight: '500',
+          marginTop: -4,
+        },
         tabBarStyle: {
-          backgroundColor: '#fff',
-          height: 60,
-          borderTopWidth: 0,
-          elevation: 10,
-          shadowColor: '#000',
-          shadowOpacity: 0.05,
-          shadowOffset: {width: 0, height: -2},
-          shadowRadius: 10,
+          backgroundColor: COLORS.surface,
+          height: 85,
+          paddingTop: 8,
+          paddingBottom: 28,
+          borderTopWidth: 1,
+          borderTopColor: COLORS.border,
         },
       }}>
       <Tabs.Screen
         name="dashboard"
         options={{
-          tabBarIcon: ({focused, size}) => (
-            <MaterialIcons
-              name="dashboard"
-              size={focused ? 28 : 24}
-              color={focused ? '#007AFF' : '#999'}
-            />
+          title: 'Dashboard',
+          tabBarIcon: ({color}) => (
+            <MaterialIcons name="dashboard" size={24} color={color} />
           ),
         }}
       />
       <Tabs.Screen
         name="diary"
         options={{
-          tabBarIcon: ({focused, size}) => (
-            <MaterialCommunityIcons
-              name="notebook"
-              size={focused ? 28 : 24}
-              color={focused ? '#007AFF' : '#999'}
-            />
+          title: 'Diary',
+          tabBarIcon: ({color}) => (
+            <MaterialCommunityIcons name="notebook-outline" size={24} color={color} />
           ),
         }}
       />
       <Tabs.Screen
         name="progress"
         options={{
-          tabBarIcon: ({focused, size}) => (
-            <MaterialIcons
-              name="insights"
-              size={focused ? 28 : 24}
-              color={focused ? '#007AFF' : '#999'}
-            />
+          title: 'Progress',
+          tabBarIcon: ({color}) => (
+            <MaterialIcons name="insights" size={24} color={color} />
           ),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          tabBarIcon: ({focused, size}) => (
-            <MaterialIcons
-              name="settings"
-              size={focused ? 28 : 24}
-              color={focused ? '#007AFF' : '#999'}
-            />
+          title: 'Settings',
+          tabBarIcon: ({color}) => (
+            <MaterialIcons name="settings" size={24} color={color} />
           ),
         }}
       />

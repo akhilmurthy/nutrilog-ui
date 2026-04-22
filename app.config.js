@@ -18,7 +18,7 @@ export default {
 
     android: {
       adaptiveIcon: {
-        foregroundImage: './assets/images/adaptive-icon.png',
+        foregroundImage: './assets/images/logo.png',
         backgroundColor: '#ffffff',
       },
       package: 'com.yourco.nutrilog',
@@ -28,7 +28,7 @@ export default {
     web: {
       bundler: 'metro',
       output: 'static',
-      favicon: './assets/images/favicon.png',
+      favicon: './assets/images/logo.png',
     },
 
     plugins: [
@@ -36,7 +36,7 @@ export default {
       [
         'expo-splash-screen',
         {
-          image: './assets/images/splash-icon.png',
+          image: './assets/images/logo.png',
           imageWidth: 200,
           resizeMode: 'contain',
           backgroundColor: '#ffffff',

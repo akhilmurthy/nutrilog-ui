@@ -1,6 +1,6 @@
 // app/(auth)/login.tsx
 import {useRouter} from 'expo-router';
-import {getAuth, signInWithEmailAndPassword} from 'firebase/auth';
+import {signInWithEmailAndPassword} from 'firebase/auth';
 import {useState} from 'react';
 
 import {StyleSheet} from 'react-native';
@@ -9,7 +9,7 @@ import AuthHeader from '../../components/auth/AuthHeader';
 import AuthInput from '../../components/auth/AuthInput';
 import AuthLayout from '../../components/auth/AuthLayout';
 import {useAuth} from '../../context/AuthContext';
-import {app} from '../../lib/firebase';
+import {auth} from '../../lib/firebase';
 
 export default function Login() {
   const {signIn} = useAuth();
@@ -20,7 +20,6 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const auth = getAuth(app);
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
