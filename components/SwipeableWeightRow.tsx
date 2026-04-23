@@ -44,7 +44,14 @@ export default function SwipeableWeightRow({
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    // Backend stores calendar dates as UTC midnight; format in UTC so a PST viewer
+    // doesn't see the previous day.
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      timeZone: 'UTC',
+    });
   };
 
   const renderRightActions = (

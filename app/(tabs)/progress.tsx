@@ -36,6 +36,20 @@ const CHART_WIDTH = SCREEN_WIDTH - 64;
 const CHART_HEIGHT = 200;
 const PAGE_SIZE = 20;
 
+// Format a Date as a local yyyy-mm-dd string (avoid UTC drift).
+const toLocalDateStr = (d: Date): string => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
+
+// Parse a yyyy-mm-dd string as a local Date (avoid UTC-midnight shift).
+const parseLocalDate = (s: string): Date => {
+  const [y, m, d] = s.split('-').map(Number);
+  return new Date(y, (m || 1) - 1, d || 1);
+};
+
 export default function ProgressScreen() {
   const {loading, error, execute, apiClient} = useApi();
   const {settings, refresh: refreshProfile} = useProfile();
@@ -45,7 +59,7 @@ export default function ProgressScreen() {
   const [showEditForm, setShowEditForm] = useState(false);
   const [editingEntry, setEditingEntry] = useState<WeightEntry | null>(null);
   const [newWeight, setNewWeight] = useState('');
-  const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState<string>(toLocalDateStr(new Date()));
   const [hasMore, setHasMore] = useState(false);
   const [initialLoadDone, setInitialLoadDone] = useState(false);
   const [timeRange, setTimeRange] = useState<'1W' | '1M' | '3M' | '6M' | '1Y' | 'ALL'>('1M');
@@ -150,7 +164,7 @@ export default function ProgressScreen() {
     const result = await execute(() => apiClient.addWeightEntry(weight, preferredUnit, selectedDate));
     if (result) {
       setNewWeight('');
-      setSelectedDate(new Date().toISOString().split('T')[0]);
+      setSelectedDate(toLocalDateStr(new Date()));
       setShowAddForm(false);
       await Promise.all([loadWeightHistory(true), refreshProfile()]);
     }
@@ -258,14 +272,24 @@ export default function ProgressScreen() {
   const minWeight = weights.length ? Math.min(...weights) - 2 : 0;
   const maxWeight = weights.length ? Math.max(...weights) + 2 : 100;
 
+  // Backend stores calendar dates as UTC midnight; format in UTC so viewers in
+  // timezones west of UTC don't see the previous day.
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      timeZone: 'UTC',
+    });
   };
 
   const formatDateShort = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', {month: 'numeric', day: 'numeric'});
+    return date.toLocaleDateString('en-US', {
+      month: 'numeric',
+      day: 'numeric',
+      timeZone: 'UTC',
+    });
   };
 
   const renderHeader = () => (
@@ -447,7 +471,7 @@ export default function ProgressScreen() {
           style={styles.addButton}
           onPress={() => {
             setNewWeight('');
-            setSelectedDate(new Date().toISOString().split('T')[0]);
+            setSelectedDate(toLocalDateStr(new Date()));
             setShowAddForm(true);
           }}>
           <MaterialCommunityIcons
@@ -506,14 +530,14 @@ export default function ProgressScreen() {
               <TouchableOpacity
                 style={styles.dateArrowButton}
                 onPress={() => {
-                  const date = new Date(selectedDate);
+                  const date = parseLocalDate(selectedDate);
                   date.setDate(date.getDate() - 1);
-                  setSelectedDate(date.toISOString().split('T')[0]);
+                  setSelectedDate(toLocalDateStr(date));
                 }}>
                 <MaterialCommunityIcons name="chevron-left" size={24} color={COLORS.text} />
               </TouchableOpacity>
               <Text style={styles.datePickerText}>
-                {new Date(selectedDate).toLocaleDateString('en-US', {
+                {parseLocalDate(selectedDate).toLocaleDateString('en-US', {
                   weekday: 'short',
                   month: 'short',
                   day: 'numeric',
@@ -522,18 +546,18 @@ export default function ProgressScreen() {
               <TouchableOpacity
                 style={styles.dateArrowButton}
                 onPress={() => {
-                  const date = new Date(selectedDate);
+                  const date = parseLocalDate(selectedDate);
                   const today = new Date();
                   today.setHours(0, 0, 0, 0);
                   date.setDate(date.getDate() + 1);
                   if (date <= today) {
-                    setSelectedDate(date.toISOString().split('T')[0]);
+                    setSelectedDate(toLocalDateStr(date));
                   }
                 }}>
                 <MaterialCommunityIcons
                   name="chevron-right"
                   size={24}
-                  color={new Date(selectedDate).toISOString().split('T')[0] === new Date().toISOString().split('T')[0] ? COLORS.border : COLORS.text}
+                  color={selectedDate === toLocalDateStr(new Date()) ? COLORS.border : COLORS.text}
                 />
               </TouchableOpacity>
             </View>
