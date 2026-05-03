@@ -1,6 +1,5 @@
 import {MaterialIcons, MaterialCommunityIcons} from '@expo/vector-icons';
 import {Redirect, Tabs} from 'expo-router';
-import {Platform, StyleSheet} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useAuth} from '../../context/AuthContext';
 
@@ -26,10 +25,8 @@ export default function TabsLayout() {
     return <Redirect href="/(auth)/login" />;
   }
 
-  // On web/PWA, insets.bottom is typically 0, so we use a minimum safe padding
-  // The actual safe area is handled by CSS env(safe-area-inset-bottom) in +html.tsx
-  const isWeb = Platform.OS === 'web';
-  const bottomPadding = isWeb ? 10 : Math.max(insets.bottom, 10);
+  // Use safe area insets (provided by SafeAreaProvider, including for web PWA)
+  const bottomPadding = Math.max(insets.bottom, 10);
   const tabBarHeight = 60 + bottomPadding;
 
   return (

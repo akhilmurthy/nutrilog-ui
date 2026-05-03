@@ -23,38 +23,33 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <ScrollViewStyleReset />
 
         <style dangerouslySetInnerHTML={{ __html: `
-          html, body {
-            /* Use tab bar color so safe area at bottom looks like navbar extension */
-            background-color: #164a2e;
+          * {
+            box-sizing: border-box;
+          }
+          html {
+            height: 100%;
+          }
+          body {
             margin: 0;
             padding: 0;
             height: 100%;
+            height: 100dvh;
+            width: 100%;
             overflow: hidden;
-          }
-          #root {
-            background-color: #0c371e;
-            margin: 0;
-            padding: 0;
+            background-color: #164a2e;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
+          }
+          #root {
+            height: 100%;
+            width: 100%;
+            background-color: #0c371e;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-          }
-          /* Ensure proper flex layout for the app content */
-          #root > div {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            min-height: 0;
-          }
-          /* PWA: Add safe area padding to tab bar and extend its background */
-          [role="tablist"] {
-            padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
-            margin-bottom: 0 !important;
           }
         `}} />
       </head>
