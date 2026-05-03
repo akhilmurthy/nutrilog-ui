@@ -1,0 +1,46 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--build-arg'
+      - 'EXPO_PUBLIC_API_URL=https://nutrilog-api-519579342149.us-central1.run.app'
+      - '--build-arg'
+      - 'FIREBASE_API_KEY=AIzaSyBcsX7LY-bIRje_phakKegEizhx-cBMtfY'
+      - '--build-arg'
+      - 'FIREBASE_AUTH_DOMAIN=nutrilog-429617.firebaseapp.com'
+      - '--build-arg'
+      - 'FIREBASE_PROJECT_ID=nutrilog-429617'
+      - '--build-arg'
+      - 'FIREBASE_STORAGE_BUCKET=nutrilog-429617.appspot.com'
+      - '--build-arg'
+      - 'FIREBASE_MESSAGING_SENDER_ID=519579342149'
+      - '--build-arg'
+      - 'FIREBASE_APP_ID=1:519579342149:web:263121036ddfeed30c1a2c'
+      - '--build-arg'
+      - 'MEASUREMENT_ID=G-C81F8W7R6W'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/nutrilog-ui'
+      - '.'
+
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/nutrilog-ui']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'nutrilog-ui'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/nutrilog-ui'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+
+images:
+  - 'gcr.io/$PROJECT_ID/nutrilog-ui'
