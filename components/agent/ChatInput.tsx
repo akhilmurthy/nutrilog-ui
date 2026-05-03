@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 16,  // Must be 16+ to prevent iOS Safari auto-zoom
     color: COLORS.text,
     maxHeight: 100,
     paddingVertical: 8,

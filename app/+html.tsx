@@ -6,7 +6,7 @@ export default function Root({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no, viewport-fit=cover" />
 
         {/* PWA */}
         <link rel="manifest" href="/manifest.json" />
@@ -25,31 +25,43 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <style dangerouslySetInnerHTML={{ __html: `
           * {
             box-sizing: border-box;
-          }
-          html {
-            height: 100%;
-          }
-          body {
             margin: 0;
             padding: 0;
-            height: 100%;
-            height: 100dvh;
-            width: 100%;
-            overflow: hidden;
-            background-color: #164a2e;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+          }
+          html, body {
+            width: 100% !important;
+            height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            background-color: #164a2e !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
           }
           #root {
-            height: 100%;
-            width: 100%;
-            background-color: #0c371e;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background-color: #0c371e !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+          }
+          #root > div {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+          }
+          /* Prevent horizontal scroll and input zoom */
+          input, textarea, select {
+            font-size: 16px !important;
           }
         `}} />
       </head>
