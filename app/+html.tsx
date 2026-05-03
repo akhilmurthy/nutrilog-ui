@@ -25,41 +25,37 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <style dangerouslySetInnerHTML={{ __html: `
           * {
             box-sizing: border-box;
+          }
+          html {
+            height: 100%;
+            height: -webkit-fill-available;
+          }
+          body {
             margin: 0;
             padding: 0;
-          }
-          html, body {
-            width: 100% !important;
-            height: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            overflow: hidden !important;
-            background-color: #164a2e !important;
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
+            min-height: 100%;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            overflow: hidden;
+            background-color: #164a2e;
+            display: flex;
+            flex-direction: column;
           }
           #root {
-            position: absolute !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            background-color: #0c371e !important;
-            display: flex !important;
-            flex-direction: column !important;
-            overflow: hidden !important;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #164a2e;
+            overflow: hidden;
+            min-height: 0;
           }
           #root > div {
-            flex: 1 !important;
-            display: flex !important;
-            flex-direction: column !important;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
           }
-          /* Prevent horizontal scroll and input zoom */
+          /* Prevent input zoom */
           input, textarea, select {
             font-size: 16px !important;
           }
