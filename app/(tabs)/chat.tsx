@@ -219,19 +219,12 @@ export default function ChatScreen() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <View style={styles.headerLeft}>
-            <MaterialCommunityIcons
-              name="robot-happy-outline"
-              size={24}
-              color={COLORS.primary}
-            />
-            <Text style={styles.headerTitle}>Coach</Text>
-          </View>
-          <TouchableOpacity onPress={handleNewChat} style={styles.newChatButton}>
+          <Text style={styles.headerTitle}>Coach</Text>
+          <TouchableOpacity onPress={handleNewChat} style={styles.addButton}>
             <MaterialCommunityIcons
               name="plus"
               size={24}
-              color={COLORS.text}
+              color={COLORS.primary}
             />
           </TouchableOpacity>
         </View>
@@ -291,20 +284,19 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
-    backgroundColor: COLORS.surface,
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 24,
+    fontWeight: '700',
     color: COLORS.text,
   },
-  newChatButton: {
-    padding: 8,
+  addButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: COLORS.primary + '20',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   messageList: {
     paddingVertical: 16,
