@@ -9,6 +9,7 @@ import {
   Alert,
   Switch,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {MaterialCommunityIcons} from '@expo/vector-icons';
@@ -249,14 +250,7 @@ export default function SettingsScreen() {
   };
 
   const handleSignOut = () => {
-    Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out?',
-      [
-        {text: 'Cancel', style: 'cancel'},
-        {text: 'Sign Out', style: 'destructive', onPress: signOut},
-      ]
-    );
+    signOut();
   };
 
   const handleDeleteAccount = () => {
@@ -823,7 +817,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 32,
+    paddingBottom: 100,
   },
   // Section Styles
   section: {
