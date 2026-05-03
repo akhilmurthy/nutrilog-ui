@@ -7,9 +7,8 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  Keyboard,
 } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ChatBubble from '../../components/agent/ChatBubble';
 import ChatInput from '../../components/agent/ChatInput';
@@ -50,10 +49,6 @@ export default function ChatScreen() {
   const [error, setError] = useState<string | null>(null);
   const [activeTools, setActiveTools] = useState<ToolStatus[]>([]);
   const flatListRef = useRef<FlatList>(null);
-  const insets = useSafeAreaInsets();
-
-  // Calculate tab bar height for keyboard offset
-  const tabBarHeight = 60 + Math.max(insets.bottom, 10);
 
   const handleStreamEvent = useCallback((event: StreamEvent) => {
     switch (event.type) {
@@ -211,15 +206,12 @@ export default function ChatScreen() {
     </View>
   );
 
-  // On iOS (native or PWA), use padding behavior with tab bar offset
-  const isIOSorWeb = Platform.OS === 'ios' || Platform.OS === 'web';
-
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <KeyboardAvoidingView
         style={styles.keyboardView}
-        behavior={isIOSorWeb ? 'padding' : 'height'}
-        keyboardVerticalOffset={tabBarHeight}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
         {/* Header */}
         <View style={styles.header}>

@@ -27,17 +27,15 @@ export default function Root({ children }: { children: React.ReactNode }) {
           html, body {
             width: 100%;
             height: 100%;
-            height: 100vh;
-            height: 100dvh;
-            height: -webkit-fill-available;
             overflow: hidden;
             background: #164a2e;
-            position: fixed;
-            inset: 0;
           }
           #root {
             position: fixed;
-            inset: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             display: flex;
             flex-direction: column;
             background: #164a2e;
@@ -53,6 +51,27 @@ export default function Root({ children }: { children: React.ReactNode }) {
           /* Prevent input zoom */
           input, textarea, select {
             font-size: 16px !important;
+          }
+          /* PWA standalone mode - extend to safe areas */
+          @media all and (display-mode: standalone) {
+            html, body, #root {
+              height: 100% !important;
+              min-height: 100vh !important;
+              min-height: 100dvh !important;
+            }
+            /* Tab bar should extend into bottom safe area */
+            [role="tablist"] {
+              padding-bottom: env(safe-area-inset-bottom, 8px) !important;
+            }
+          }
+          /* iOS PWA specific */
+          @supports (-webkit-touch-callout: none) {
+            body {
+              min-height: -webkit-fill-available;
+            }
+            #root {
+              min-height: -webkit-fill-available;
+            }
           }
         `}} />
       </head>
