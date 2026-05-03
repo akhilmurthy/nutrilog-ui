@@ -1,5 +1,7 @@
 import {MaterialIcons, MaterialCommunityIcons} from '@expo/vector-icons';
 import {Redirect, Tabs} from 'expo-router';
+import {Platform} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useAuth} from '../../context/AuthContext';
 
 // App Theme Colors
@@ -14,6 +16,7 @@ const COLORS = {
 
 export default function TabsLayout() {
   const {token, loading} = useAuth();
+  const insets = useSafeAreaInsets();
 
   if (loading) {
     return null;
@@ -23,8 +26,14 @@ export default function TabsLayout() {
     return <Redirect href="/(auth)/login" />;
   }
 
+  // Use safe area insets for bottom padding, with minimum padding
+  const bottomPadding = Math.max(insets.bottom, 10) + 10;
+  const tabBarHeight = 60 + bottomPadding;
+
   return (
     <Tabs
+      safeAreaInsets={{ bottom: 0 }}
+      sceneContainerStyle={{ backgroundColor: COLORS.background }}
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: true,
@@ -37,9 +46,9 @@ export default function TabsLayout() {
         },
         tabBarStyle: {
           backgroundColor: COLORS.surface,
-          height: 85,
+          height: tabBarHeight,
           paddingTop: 8,
-          paddingBottom: 28,
+          paddingBottom: bottomPadding,
           borderTopWidth: 1,
           borderTopColor: COLORS.border,
         },
@@ -68,6 +77,24 @@ export default function TabsLayout() {
           title: 'Progress',
           tabBarIcon: ({color}) => (
             <MaterialIcons name="insights" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="plans"
+        options={{
+          title: 'Plans',
+          tabBarIcon: ({color}) => (
+            <MaterialCommunityIcons name="calendar-month" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="chat"
+        options={{
+          title: 'Coach',
+          tabBarIcon: ({color}) => (
+            <MaterialCommunityIcons name="robot-happy-outline" size={24} color={color} />
           ),
         }}
       />

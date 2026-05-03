@@ -2,6 +2,7 @@ import {Slot} from 'expo-router';
 import {useEffect, useState} from 'react';
 import {PaperProvider} from 'react-native-paper';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {onAuthStateChanged, signOut as firebaseSignOut} from 'firebase/auth';
 import {auth as firebaseAuth} from '../lib/firebase';
 import {AuthContext} from '../context/AuthContext';
@@ -42,13 +43,15 @@ export default function Layout() {
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-      <AuthContext.Provider value={auth}>
-        <ProfileProvider>
-          <PaperProvider theme={AppTheme}>
-            <Slot />
-          </PaperProvider>
-        </ProfileProvider>
-      </AuthContext.Provider>
+      <SafeAreaProvider>
+        <AuthContext.Provider value={auth}>
+          <ProfileProvider>
+            <PaperProvider theme={AppTheme}>
+              <Slot />
+            </PaperProvider>
+          </ProfileProvider>
+        </AuthContext.Provider>
+      </SafeAreaProvider>
     </GestureHandlerRootView>
   );
 }

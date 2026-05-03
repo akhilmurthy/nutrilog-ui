@@ -1,0 +1,18 @@
+{
+  "name": "Nutrilog",
+  "short_name": "Nutrilog",
+  "description": "Track your nutrition and reach your health goals",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0c371e",
+  "theme_color": "#0c371e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

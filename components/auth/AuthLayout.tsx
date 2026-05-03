@@ -1,16 +1,18 @@
 import { ReactNode } from "react";
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   const theme = useTheme();
 
   return (
-    <View
+    <SafeAreaView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
+      edges={['top', 'bottom']}
     >
       {children}
-    </View>
+    </SafeAreaView>
   );
 }
 
