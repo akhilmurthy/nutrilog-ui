@@ -51,9 +51,6 @@ export default function ChatScreen() {
   const flatListRef = useRef<FlatList>(null);
   const insets = useSafeAreaInsets();
 
-  // On native, apply top inset. On web, CSS handles safe area via env().
-  const topPadding = Platform.OS === 'web' ? 0 : insets.top;
-
   const handleStreamEvent = useCallback((event: StreamEvent) => {
     switch (event.type) {
       case 'message_start':
@@ -211,7 +208,7 @@ export default function ChatScreen() {
   );
 
   return (
-    <View style={[styles.container, { paddingTop: topPadding }]}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <KeyboardAvoidingView
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
