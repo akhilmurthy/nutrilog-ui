@@ -10,7 +10,7 @@ import {
   Modal,
   Animated,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Swipeable } from 'react-native-gesture-handler';
 import { useFocusEffect } from 'expo-router';
@@ -42,6 +42,7 @@ const MEAL_CONFIG: Record<MealType, { icon: string; label: string; color: string
 };
 
 export default function DiaryScreen() {
+  const insets = useSafeAreaInsets();
   const { loading, error, execute, apiClient } = useApi();
   const { settings } = useProfile();
   const [showAddForm, setShowAddForm] = useState(false);
@@ -182,7 +183,7 @@ export default function DiaryScreen() {
 
   if (showAddForm) {
     return (
-      <SafeAreaView style={styles.container} edges={['top']}>
+      <View style={[styles.container, {paddingTop: insets.top}]}>
         <View style={styles.addFormHeader}>
           <TouchableOpacity
             style={styles.closeButton}
@@ -200,12 +201,12 @@ export default function DiaryScreen() {
             initialMealType={selectedMealForAdd}
           />
         </ScrollView>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View style={[styles.container, {paddingTop: insets.top}]}>
       {/* Date Navigation Header */}
       <View style={styles.dateHeader}>
         <TouchableOpacity onPress={() => navigateDate('prev')} style={styles.dateNavButton}>
@@ -364,8 +365,6 @@ export default function DiaryScreen() {
             <Text style={styles.emptyStateSubtext}>Start logging your meals</Text>
           </View>
         )}
-
-        <View style={{ height: 100 }} />
       </ScrollView>
 
       {/* Floating Add Button */}
@@ -429,7 +428,7 @@ export default function DiaryScreen() {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }
 

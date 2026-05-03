@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import {BarChart, LineChart} from 'react-native-gifted-charts';
 import {getAuth} from 'firebase/auth';
@@ -78,6 +78,7 @@ const dayLabel = (d: Date) =>
   d.toLocaleDateString('en-US', {weekday: 'short'}).slice(0, 1);
 
 export default function DashboardScreen() {
+  const insets = useSafeAreaInsets();
   const {apiClient} = useApi();
   const {settings} = useProfile();
   const preferredUnit: 'kg' | 'lb' = settings.weightUnit ?? 'lb';
@@ -216,16 +217,16 @@ export default function DashboardScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.container} edges={['top']}>
+      <View style={[styles.container, {paddingTop: insets.top}]}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.primary} />
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View style={[styles.container, {paddingTop: insets.top}]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -475,9 +476,8 @@ export default function DashboardScreen() {
           )}
         </View>
 
-        <View style={{height: 100}} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 

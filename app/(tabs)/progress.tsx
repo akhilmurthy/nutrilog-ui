@@ -10,7 +10,7 @@ import {
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import {LineChart} from 'react-native-gifted-charts';
 import {useApi} from '../../hooks/useApi';
@@ -51,6 +51,7 @@ const parseLocalDate = (s: string): Date => {
 };
 
 export default function ProgressScreen() {
+  const insets = useSafeAreaInsets();
   const {loading, error, execute, apiClient} = useApi();
   const {settings, refresh: refreshProfile} = useProfile();
   const preferredUnit: 'kg' | 'lb' = settings.weightUnit ?? 'lb';
@@ -440,7 +441,7 @@ export default function ProgressScreen() {
   );
 
   const renderFooter = () => {
-    if (!loadingMore) return <View style={{height: 100}} />;
+    if (!loadingMore) return null;
     return (
       <View style={styles.loadingMore}>
         <ActivityIndicator size="small" color={COLORS.primary} />
@@ -463,7 +464,7 @@ export default function ProgressScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View style={[styles.container, {paddingTop: insets.top}]}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Progress</Text>
@@ -634,7 +635,7 @@ export default function ProgressScreen() {
           </View>
         </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 

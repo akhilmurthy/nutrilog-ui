@@ -19,35 +19,33 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta name="theme-color" content="#164a2e" />
 
         <style dangerouslySetInnerHTML={{ __html: `
-          :root {
-            --sat: env(safe-area-inset-top);
-            --sar: env(safe-area-inset-right);
-            --sab: env(safe-area-inset-bottom);
-            --sal: env(safe-area-inset-left);
-          }
-          * { box-sizing: border-box; margin: 0; padding: 0; }
-          html { height: 100%; }
-          body {
-            height: 100%;
+          *, *::before, *::after { box-sizing: border-box; }
+          html, body {
+            margin: 0;
+            padding: 0;
             height: 100dvh;
-            background: #164a2e;
-            overflow: hidden;
-            position: fixed;
             width: 100%;
-            top: 0;
-            left: 0;
+            overflow: hidden;
+            background: #164a2e;
+          }
+          body {
+            position: fixed;
+            inset: 0;
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
           }
           #root {
-            height: 100%;
-            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             display: flex;
             flex-direction: column;
           }
-          #root > div {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
+          /* Tab bar with safe area padding */
+          [role="tablist"] {
+            padding-bottom: env(safe-area-inset-bottom, 0px) !important;
           }
           input, textarea, select { font-size: 16px !important; }
         `}} />

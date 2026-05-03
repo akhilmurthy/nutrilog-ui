@@ -1,5 +1,6 @@
 import {Slot} from 'expo-router';
 import {useEffect, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
 import {PaperProvider} from 'react-native-paper';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -8,6 +9,12 @@ import {auth as firebaseAuth} from '../lib/firebase';
 import {AuthContext} from '../context/AuthContext';
 import {ProfileProvider} from '../context/ProfileContext';
 import {AppTheme} from '../theme';
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+});
 
 export default function Layout() {
   const [token, setToken] = useState<string | null>(null);
@@ -42,8 +49,8 @@ export default function Layout() {
   };
 
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
-      <SafeAreaProvider>
+    <GestureHandlerRootView style={styles.root}>
+      <SafeAreaProvider style={styles.root}>
         <AuthContext.Provider value={auth}>
           <ProfileProvider>
             <PaperProvider theme={AppTheme}>

@@ -9,7 +9,7 @@ import {
   Modal,
   ActivityIndicator,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useApi } from '../../hooks/useApi';
@@ -92,6 +92,7 @@ const MEAL_CONFIG: Record<MealType, { icon: string; label: string; color: string
 };
 
 export default function PlansScreen() {
+  const insets = useSafeAreaInsets();
   const { loading, error, execute, apiClient } = useApi();
   const router = useRouter();
   const [mealPlans, setMealPlans] = useState<MealPlan[]>([]);
@@ -191,7 +192,7 @@ export default function PlansScreen() {
   const activePlan = mealPlans.find((p) => p.isActive);
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View style={[styles.container, {paddingTop: insets.top}]}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Meal Plans</Text>
@@ -280,8 +281,6 @@ export default function PlansScreen() {
             </TouchableOpacity>
           </View>
         )}
-
-        <View style={{ height: 100 }} />
       </ScrollView>
 
       {/* Plan Detail Modal */}
@@ -466,7 +465,7 @@ export default function PlansScreen() {
           </SafeAreaView>
         )}
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }
 

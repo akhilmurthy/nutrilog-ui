@@ -8,7 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ChatBubble from '../../components/agent/ChatBubble';
 import ChatInput from '../../components/agent/ChatInput';
@@ -49,6 +49,10 @@ export default function ChatScreen() {
   const [error, setError] = useState<string | null>(null);
   const [activeTools, setActiveTools] = useState<ToolStatus[]>([]);
   const flatListRef = useRef<FlatList>(null);
+  const insets = useSafeAreaInsets();
+
+  // On native, apply top inset. On web, CSS handles safe area via env().
+  const topPadding = Platform.OS === 'web' ? 0 : insets.top;
 
   const handleStreamEvent = useCallback((event: StreamEvent) => {
     switch (event.type) {
@@ -207,14 +211,14 @@ export default function ChatScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View style={styles.container}>
       <KeyboardAvoidingView
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       >
         {/* Header */}
-        <View style={styles.header}>
+        <View style={[styles.header, { paddingTop: topPadding + 12 }]}>
           <View style={styles.headerLeft}>
             <MaterialCommunityIcons
               name="robot-happy-outline"
@@ -249,6 +253,7 @@ export default function ChatScreen() {
               flatListRef.current?.scrollToEnd({ animated: true });
             }
           }}
+          keyboardShouldPersistTaps="handled"
         />
 
         {/* Error */}
@@ -258,7 +263,7 @@ export default function ChatScreen() {
           </View>
         )}
 
-        {/* Input */}
+        {/* Input - firmly attached to bottom, above tab bar */}
         <ChatInput
           value={inputText}
           onChange={setInputText}
@@ -266,7 +271,7 @@ export default function ChatScreen() {
           loading={isLoading}
         />
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -283,7 +288,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingBottom: 12,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
     backgroundColor: COLORS.surface,

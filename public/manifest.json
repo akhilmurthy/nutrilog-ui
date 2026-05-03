@@ -4,8 +4,8 @@
   "description": "Track your nutrition and reach your health goals",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0c371e",
-  "theme_color": "#0c371e",
+  "background_color": "#164a2e",
+  "theme_color": "#164a2e",
   "orientation": "portrait",
   "icons": [
     {

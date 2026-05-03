@@ -1,6 +1,6 @@
 import {MaterialIcons, MaterialCommunityIcons} from '@expo/vector-icons';
 import {Redirect, Tabs} from 'expo-router';
-import {Platform} from 'react-native';
+import {Platform, View, StyleSheet} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useAuth} from '../../context/AuthContext';
 
@@ -26,37 +26,33 @@ export default function TabsLayout() {
     return <Redirect href="/(auth)/login" />;
   }
 
-  // On web, use minimal padding (CSS handles safe area)
-  // On native, use actual safe area insets
   const isWeb = Platform.OS === 'web';
-  const bottomPadding = isWeb ? 8 : Math.max(insets.bottom, 8);
-  const tabBarHeight = 56 + bottomPadding;
+  // On native, apply safe area padding. On web, extend to bottom (CSS safe-area-inset handles coloring).
+  const bottomInset = isWeb ? 0 : insets.bottom;
 
   return (
-    <Tabs
-      safeAreaInsets={{ bottom: 0 }}
-      sceneContainerStyle={{
-        backgroundColor: COLORS.background,
-        flex: 1,
-      }}
-      screenOptions={{
-        headerShown: false,
-        tabBarShowLabel: true,
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.textSecondary,
-        tabBarLabelStyle: {
-          fontSize: 10,
-          fontWeight: '500',
-          marginTop: -4,
-        },
-        tabBarStyle: {
-          backgroundColor: COLORS.surface,
-          height: tabBarHeight,
-          paddingTop: 8,
-          paddingBottom: bottomPadding,
-          borderTopWidth: 0,
-        },
-      }}>
+    <View style={styles.container}>
+      <Tabs
+        safeAreaInsets={{bottom: 0, top: 0, left: 0, right: 0}}
+        sceneContainerStyle={styles.sceneContainer}
+        screenOptions={{
+          headerShown: false,
+          tabBarShowLabel: true,
+          tabBarActiveTintColor: COLORS.primary,
+          tabBarInactiveTintColor: COLORS.textSecondary,
+          tabBarLabelStyle: {
+            fontSize: 10,
+            fontWeight: '500',
+            marginTop: -4,
+          },
+          tabBarStyle: [
+            styles.tabBar,
+            {
+              paddingBottom: bottomInset,
+              height: 56 + bottomInset,
+            },
+          ],
+        }}>
       <Tabs.Screen
         name="dashboard"
         options={{
@@ -118,5 +114,24 @@ export default function TabsLayout() {
         }}
       />
     </Tabs>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: COLORS.surface,
+  },
+  sceneContainer: {
+    flex: 1,
+    backgroundColor: COLORS.surface,
+  },
+  tabBar: {
+    backgroundColor: COLORS.surface,
+    borderTopWidth: 0,
+    elevation: 0,
+    shadowOpacity: 0,
+    paddingTop: 8,
+  },
+});

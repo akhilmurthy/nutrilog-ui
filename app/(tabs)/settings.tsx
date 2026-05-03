@@ -10,7 +10,7 @@ import {
   Switch,
   ActivityIndicator,
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import {getAuth} from 'firebase/auth';
 import {router} from 'expo-router';
@@ -35,6 +35,7 @@ const COLORS = {
 type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
 
 export default function SettingsScreen() {
+  const insets = useSafeAreaInsets();
   const {signOut} = useAuth();
   const {loading, execute, apiClient} = useApi();
   const {settings, updateSettings} = useProfile();
@@ -448,7 +449,7 @@ export default function SettingsScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View style={[styles.container, {paddingTop: insets.top}]}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Settings</Text>
@@ -795,7 +796,7 @@ export default function SettingsScreen() {
         </View>
 
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
