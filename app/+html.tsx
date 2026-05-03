@@ -1,5 +1,3 @@
-import { ScrollViewStyleReset } from 'expo-router/html';
-
 export default function Root({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -20,40 +18,37 @@ export default function Root({ children }: { children: React.ReactNode }) {
 
         <meta name="theme-color" content="#0c371e" />
 
-        <ScrollViewStyleReset />
-
         <style dangerouslySetInnerHTML={{ __html: `
           * {
             box-sizing: border-box;
-          }
-          html {
-            height: 100%;
-            height: -webkit-fill-available;
-          }
-          body {
             margin: 0;
             padding: 0;
-            min-height: 100%;
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
+          }
+          html, body {
+            width: 100%;
+            height: 100%;
+            height: 100vh;
+            height: 100dvh;
+            height: -webkit-fill-available;
             overflow: hidden;
-            background-color: #164a2e;
-            display: flex;
-            flex-direction: column;
+            background: #164a2e;
+            position: fixed;
+            inset: 0;
           }
           #root {
-            flex: 1;
+            position: fixed;
+            inset: 0;
             display: flex;
             flex-direction: column;
-            background-color: #164a2e;
+            background: #164a2e;
             overflow: hidden;
-            min-height: 0;
           }
           #root > div {
             flex: 1;
             display: flex;
             flex-direction: column;
             min-height: 0;
+            overflow: hidden;
           }
           /* Prevent input zoom */
           input, textarea, select {
