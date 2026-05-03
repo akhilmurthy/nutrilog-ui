@@ -13,6 +13,7 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import {getAuth} from 'firebase/auth';
+import {router} from 'expo-router';
 import {useAuth} from '../../context/AuthContext';
 import {useProfile, UserSettings} from '../../context/ProfileContext';
 import {useApi} from '../../hooks/useApi';
@@ -727,6 +728,13 @@ export default function SettingsScreen() {
                 ])}
               </>
             )}
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => router.push('/agent/meal-plans')}>
+              <MaterialCommunityIcons name="calendar-check" size={20} color={COLORS.primary} />
+              <Text style={styles.actionButtonText}>View Meal Plans</Text>
+              <MaterialCommunityIcons name="chevron-right" size={20} color={COLORS.textSecondary} style={{marginLeft: 'auto'}} />
+            </TouchableOpacity>
           </View>
         </View>
 

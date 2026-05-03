@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,12 +8,10 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Food, MealType, SearchResult } from '../types/food';
+import { Food, MealType } from '../types/food';
 import BarcodeScanner from './BarcodeScanner';
-import { apiClient } from '../lib/api';
 
 // App Theme Colors
 const COLORS = {
@@ -54,9 +52,6 @@ export default function AddFoodForm({ onAddFood, loading, initialMealType = 'bre
   });
   const [selectedMeal, setSelectedMeal] = useState<MealType>(initialMealType);
   const [showScanner, setShowScanner] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const [searching, setSearching] = useState(false);
 
   const resetForm = () => {
     setFoodData({
@@ -97,44 +92,6 @@ export default function AddFoodForm({ onAddFood, loading, initialMealType = 'bre
     setFoodData({ ...foodData, [field]: numValue });
   };
 
-  // Debounced search effect
-  useEffect(() => {
-    if (searchQuery.length < 2) {
-      setSearchResults([]);
-      setSearching(false);
-      return;
-    }
-
-    setSearching(true);
-    const timeout = setTimeout(async () => {
-      try {
-        const results = await apiClient.searchFoods(searchQuery) as SearchResult[];
-        setSearchResults(results);
-      } catch (error) {
-        console.error('Search error:', error);
-        setSearchResults([]);
-      } finally {
-        setSearching(false);
-      }
-    }, 200);
-
-    return () => clearTimeout(timeout);
-  }, [searchQuery]);
-
-  const selectSearchResult = (result: SearchResult) => {
-    setFoodData({
-      name: result.name,
-      calories: result.calories,
-      protein: result.protein || 0,
-      carbs: result.carbs || 0,
-      fat: result.fat || 0,
-      brand: result.brand,
-      barcode: result.barcode,
-    });
-    setSearchQuery('');
-    setSearchResults([]);
-  };
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -171,63 +128,6 @@ export default function AddFoodForm({ onAddFood, loading, initialMealType = 'bre
             );
           })}
         </View>
-      </View>
-
-      {/* Search Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Search Food</Text>
-        <View style={styles.searchContainer}>
-          <MaterialCommunityIcons name="magnify" size={22} color={COLORS.textSecondary} style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchInput}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            placeholder="Search foods..."
-            placeholderTextColor={COLORS.textSecondary}
-            autoCorrect={false}
-          />
-          {searching && <ActivityIndicator size="small" color={COLORS.primary} />}
-          {searchQuery.length > 0 && !searching && (
-            <TouchableOpacity onPress={() => { setSearchQuery(''); setSearchResults([]); }}>
-              <MaterialCommunityIcons name="close-circle" size={20} color={COLORS.textSecondary} />
-            </TouchableOpacity>
-          )}
-        </View>
-
-        {/* Search Results */}
-        {searchResults.length > 0 && (
-          <View style={styles.searchResults}>
-            {searchResults.map((result, index) => (
-              <TouchableOpacity
-                key={`${result.name}-${index}`}
-                style={styles.searchResultItem}
-                onPress={() => selectSearchResult(result)}
-                activeOpacity={0.7}
-              >
-                <View style={styles.searchResultContent}>
-                  <View style={styles.searchResultHeader}>
-                    <Text style={styles.searchResultName} numberOfLines={1}>{result.name}</Text>
-                    <View style={[styles.sourceTag, result.source === 'history' ? styles.sourceHistory : styles.sourceDatabase]}>
-                      <MaterialCommunityIcons
-                        name={result.source === 'history' ? 'history' : 'database'}
-                        size={10}
-                        color={result.source === 'history' ? COLORS.primary : COLORS.carbs}
-                      />
-                      <Text style={[styles.sourceTagText, result.source === 'history' ? styles.sourceHistoryText : styles.sourceDatabaseText]}>
-                        {result.source === 'history' ? 'Recent' : 'Database'}
-                      </Text>
-                    </View>
-                  </View>
-                  {result.brand && <Text style={styles.searchResultBrand}>{result.brand}</Text>}
-                  <Text style={styles.searchResultMacros}>
-                    {result.calories} cal  •  P: {result.protein || 0}g  •  C: {result.carbs || 0}g  •  F: {result.fat || 0}g
-                  </Text>
-                </View>
-                <MaterialCommunityIcons name="chevron-right" size={20} color={COLORS.textSecondary} />
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
       </View>
 
       {/* Quick Add Options */}
@@ -542,87 +442,5 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
     color: '#fff',
-  },
-  // Search styles
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.surface,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  searchIcon: {
-    marginRight: 10,
-  },
-  searchInput: {
-    flex: 1,
-    paddingVertical: 14,
-    fontSize: 16,
-    color: COLORS.text,
-  },
-  searchResults: {
-    marginTop: 12,
-    backgroundColor: COLORS.surface,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    overflow: 'hidden',
-  },
-  searchResultItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-  },
-  searchResultContent: {
-    flex: 1,
-  },
-  searchResultHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginBottom: 2,
-  },
-  searchResultName: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: COLORS.text,
-    flex: 1,
-  },
-  searchResultBrand: {
-    fontSize: 12,
-    color: COLORS.textSecondary,
-    marginBottom: 4,
-  },
-  searchResultMacros: {
-    fontSize: 12,
-    color: COLORS.textSecondary,
-  },
-  sourceTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-    gap: 3,
-  },
-  sourceHistory: {
-    backgroundColor: COLORS.primary + '20',
-  },
-  sourceDatabase: {
-    backgroundColor: COLORS.carbs + '20',
-  },
-  sourceTagText: {
-    fontSize: 10,
-    fontWeight: '600',
-  },
-  sourceHistoryText: {
-    color: COLORS.primary,
-  },
-  sourceDatabaseText: {
-    color: COLORS.carbs,
   },
 });

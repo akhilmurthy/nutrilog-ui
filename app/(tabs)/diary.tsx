@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,12 @@ import {
   Alert,
   TextInput,
   Modal,
+  Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Swipeable } from 'react-native-gesture-handler';
+import { useFocusEffect } from 'expo-router';
 import AddFoodForm from '../../components/AddFoodForm';
 import { useApi } from '../../hooks/useApi';
 import { useProfile } from '../../context/ProfileContext';
@@ -53,6 +56,13 @@ export default function DiaryScreen() {
   useEffect(() => {
     loadDiaryEntry();
   }, [currentDate]);
+
+  // Refresh diary when tab comes into focus (e.g., after logging via chat)
+  useFocusEffect(
+    useCallback(() => {
+      loadDiaryEntry();
+    }, [currentDate])
+  );
 
   const loadDiaryEntry = async () => {
     const dateStr = currentDate.toISOString().split('T')[0];
@@ -123,6 +133,13 @@ export default function DiaryScreen() {
         },
       },
     ]);
+  };
+
+  const handleRemoveFood = async (mealType: MealType, foodId: string) => {
+    if (!diaryEntry?.id) return;
+
+    await execute(() => apiClient.removeFoodFromDiary(diaryEntry.id!, mealType, foodId));
+    await loadDiaryEntry();
   };
 
   const navigateDate = (direction: 'prev' | 'next') => {
@@ -292,6 +309,7 @@ export default function DiaryScreen() {
                 foods={diaryEntry.meals[mealType] || []}
                 config={MEAL_CONFIG[mealType]}
                 onAddPress={() => openAddForm(mealType)}
+                onRemoveFood={(foodId) => handleRemoveFood(mealType, foodId)}
               />
             ))}
 
@@ -446,17 +464,76 @@ function MacroProgressBar({
   );
 }
 
+// Swipeable Food Item Component
+function SwipeableFoodItem({
+  food,
+  isLast,
+  onRemove,
+}: {
+  food: Food;
+  isLast: boolean;
+  onRemove: () => void;
+}) {
+  const swipeableRef = useRef<Swipeable>(null);
+
+  const renderRightActions = (
+    progress: Animated.AnimatedInterpolation<number>,
+    dragX: Animated.AnimatedInterpolation<number>
+  ) => {
+    const scale = dragX.interpolate({
+      inputRange: [-100, 0],
+      outputRange: [1, 0],
+      extrapolate: 'clamp',
+    });
+
+    return (
+      <TouchableOpacity
+        style={styles.deleteAction}
+        onPress={() => {
+          swipeableRef.current?.close();
+          onRemove();
+        }}
+      >
+        <Animated.View style={{ transform: [{ scale }] }}>
+          <MaterialCommunityIcons name="delete" size={24} color="#fff" />
+        </Animated.View>
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <Swipeable
+      ref={swipeableRef}
+      renderRightActions={renderRightActions}
+      rightThreshold={40}
+      overshootRight={false}
+    >
+      <View style={[styles.foodItem, styles.foodItemSwipeable, isLast && styles.foodItemLast]}>
+        <View style={styles.foodInfo}>
+          <Text style={styles.foodName}>{food.name}</Text>
+          <Text style={styles.foodMacros}>
+            P: {food.protein || 0}g  •  C: {food.carbs || 0}g  •  F: {food.fat || 0}g
+          </Text>
+        </View>
+        <Text style={styles.foodCalories}>{food.calories}</Text>
+      </View>
+    </Swipeable>
+  );
+}
+
 // Meal Section Component
 function MealSection({
   mealType,
   foods,
   config,
-  onAddPress
+  onAddPress,
+  onRemoveFood,
 }: {
   mealType: MealType;
   foods: Food[];
   config: { icon: string; label: string; color: string };
   onAddPress: () => void;
+  onRemoveFood: (foodId: string) => void;
 }) {
   const totalCalories = foods.reduce((sum, food) => sum + food.calories, 0);
 
@@ -484,15 +561,12 @@ function MealSection({
       ) : (
         <View style={styles.foodList}>
           {foods.map((food, index) => (
-            <View key={index} style={[styles.foodItem, index === foods.length - 1 && styles.foodItemLast]}>
-              <View style={styles.foodInfo}>
-                <Text style={styles.foodName}>{food.name}</Text>
-                <Text style={styles.foodMacros}>
-                  P: {food.protein || 0}g  •  C: {food.carbs || 0}g  •  F: {food.fat || 0}g
-                </Text>
-              </View>
-              <Text style={styles.foodCalories}>{food.calories}</Text>
-            </View>
+            <SwipeableFoodItem
+              key={food.id || index}
+              food={food}
+              isLast={index === foods.length - 1}
+              onRemove={() => food.id && onRemoveFood(food.id)}
+            />
           ))}
         </View>
       )}
@@ -698,7 +772,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   foodList: {
-    paddingHorizontal: 16,
+    // No horizontal padding - swipeable items handle their own padding
   },
   foodItem: {
     flexDirection: 'row',
@@ -710,6 +784,10 @@ const styles = StyleSheet.create({
   },
   foodItemLast: {
     borderBottomWidth: 0,
+  },
+  foodItemSwipeable: {
+    backgroundColor: COLORS.surface,
+    paddingHorizontal: 16,
   },
   foodInfo: {
     flex: 1,
@@ -836,5 +914,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#fff',
+  },
+  // Swipe to delete
+  deleteAction: {
+    backgroundColor: '#FF3B30',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 80,
   },
 });

@@ -29,6 +29,11 @@ export default {
       bundler: 'metro',
       output: 'static',
       favicon: './assets/images/logo.png',
+      name: 'Nutrilog',
+      shortName: 'Nutrilog',
+      themeColor: '#0c371e',
+      backgroundColor: '#0c371e',
+      display: 'standalone',
     },
 
     plugins: [
