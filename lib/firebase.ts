@@ -1,7 +1,7 @@
 import {getApps, initializeApp, getApp} from 'firebase/app';
-import {initializeAuth, getReactNativePersistence, Auth} from 'firebase/auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {initializeAuth, getAuth, Auth, browserLocalPersistence} from 'firebase/auth';
 import Constants from 'expo-constants';
+import {Platform} from 'react-native';
 
 const {
   FIREBASE_API_KEY,
@@ -26,20 +26,47 @@ const firebaseConfig = {
 // Initialize app
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-// Initialize auth with React Native persistence (only once)
+// Initialize auth with platform-specific persistence
 let auth: Auth;
-try {
-  auth = initializeAuth(app, {
-    persistence: getReactNativePersistence(AsyncStorage),
-  });
-} catch (error: any) {
-  // Auth already initialized, get existing instance
-  if (error.code === 'auth/already-initialized') {
-    const { getAuth } = require('firebase/auth');
-    auth = getAuth(app);
-  } else {
+
+const initAuth = async () => {
+  try {
+    if (Platform.OS === 'web') {
+      return initializeAuth(app, {
+        persistence: browserLocalPersistence,
+      });
+    } else {
+      // Dynamic import for React Native only
+      const {getReactNativePersistence} = await import('firebase/auth');
+      const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
+      return initializeAuth(app, {
+        persistence: getReactNativePersistence(AsyncStorage),
+      });
+    }
+  } catch (error: any) {
+    if (error.code === 'auth/already-initialized') {
+      return getAuth(app);
+    }
     throw error;
   }
+};
+
+// For web, initialize synchronously
+if (Platform.OS === 'web') {
+  try {
+    auth = initializeAuth(app, {
+      persistence: browserLocalPersistence,
+    });
+  } catch (error: any) {
+    if (error.code === 'auth/already-initialized') {
+      auth = getAuth(app);
+    } else {
+      throw error;
+    }
+  }
+} else {
+  // For native, use getAuth as fallback (initAuth will be called when needed)
+  auth = getAuth(app);
 }
 
-export {app, auth};
+export {app, auth, initAuth};
