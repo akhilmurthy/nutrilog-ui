@@ -229,6 +229,7 @@ export default function DashboardScreen() {
     <View style={[styles.container, {paddingTop: insets.top}]}>
       <ScrollView
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 80 }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

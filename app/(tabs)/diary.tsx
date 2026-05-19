@@ -367,15 +367,6 @@ export default function DiaryScreen() {
         )}
       </ScrollView>
 
-      {/* Floating Add Button */}
-      <TouchableOpacity
-        style={styles.fab}
-        onPress={() => openAddForm('breakfast')}
-        activeOpacity={0.8}
-      >
-        <MaterialCommunityIcons name="plus" size={28} color="#fff" />
-      </TouchableOpacity>
-
       {/* Exercise Modal */}
       <Modal
         visible={showExerciseModal}
@@ -715,6 +706,7 @@ const styles = StyleSheet.create({
   // Meals
   mealsContainer: {
     paddingHorizontal: 16,
+    paddingBottom: 80,
     gap: 12,
   },
   mealCard: {
@@ -822,23 +814,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.textSecondary,
     marginTop: 4,
-  },
-  // FAB
-  fab: {
-    position: 'absolute',
-    bottom: 24,
-    right: 24,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: COLORS.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 8,
   },
   // Add Form Header
   addFormHeader: {

@@ -358,6 +358,35 @@ class ApiClient {
       }
     );
   }
+
+  // Recipe endpoints
+  async getRecipes() {
+    return this.request<any[]>('/api/recipes');
+  }
+
+  async getRecipe(id: string) {
+    return this.request<any>(`/api/recipes/${id}`);
+  }
+
+  async createRecipe(data: any) {
+    return this.request('/api/recipes', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateRecipe(id: string, data: any) {
+    return this.request(`/api/recipes/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteRecipe(id: string) {
+    return this.request(`/api/recipes/${id}`, {
+      method: 'DELETE',
+    });
+  }
 }
 
 export const apiClient = new ApiClient();

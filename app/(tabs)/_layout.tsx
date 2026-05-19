@@ -1,8 +1,11 @@
+import React, {useState} from 'react';
 import {MaterialIcons, MaterialCommunityIcons} from '@expo/vector-icons';
 import {Redirect, Tabs} from 'expo-router';
 import {Platform, View, StyleSheet} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useAuth} from '../../context/AuthContext';
+import CoachFAB from '../../components/CoachFAB';
+import CoachModal from '../../components/CoachModal';
 
 // App Theme Colors
 const COLORS = {
@@ -17,6 +20,7 @@ const COLORS = {
 export default function TabsLayout() {
   const {token, loading} = useAuth();
   const insets = useSafeAreaInsets();
+  const [coachVisible, setCoachVisible] = useState(false);
 
   if (loading) {
     return null;
@@ -90,12 +94,18 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="recipes"
+        options={{
+          title: 'Recipes',
+          tabBarIcon: ({color}) => (
+            <MaterialCommunityIcons name="book-open-variant" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="chat"
         options={{
-          title: 'Coach',
-          tabBarIcon: ({color}) => (
-            <MaterialCommunityIcons name="robot-happy-outline" size={24} color={color} />
-          ),
+          href: null,
         }}
       />
       <Tabs.Screen
@@ -114,6 +124,18 @@ export default function TabsLayout() {
         }}
       />
     </Tabs>
+
+      {/* Coach FAB */}
+      <CoachFAB
+        onPress={() => setCoachVisible(true)}
+        bottomOffset={56 + bottomInset}
+      />
+
+      {/* Coach Modal */}
+      <CoachModal
+        visible={coachVisible}
+        onClose={() => setCoachVisible(false)}
+      />
     </View>
   );
 }

@@ -495,9 +495,10 @@ export default function ProgressScreen() {
         refreshing={refreshing}
         onRefresh={handleRefresh}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={
-          weightHistory.length === 0 ? styles.emptyContainer : undefined
-        }
+        contentContainerStyle={[
+          { paddingBottom: 80 },
+          weightHistory.length === 0 && styles.emptyContainer,
+        ]}
       />
 
       {error && (
