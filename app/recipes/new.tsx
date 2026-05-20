@@ -11,6 +11,14 @@ import {
   Platform,
   ActivityIndicator,
 } from 'react-native';
+
+const showAlert = (title: string, message: string) => {
+  if (Platform.OS === 'web') {
+    window.alert(`${title}\n\n${message}`);
+  } else {
+    showAlert(title, message);
+  }
+};
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -134,7 +142,7 @@ export default function NewRecipeScreen() {
 
   const handleSave = async () => {
     if (!name.trim()) {
-      Alert.alert('Missing Name', 'Please enter a recipe name.');
+      showAlert('Missing Name', 'Please enter a recipe name.');
       return;
     }
 
@@ -145,12 +153,12 @@ export default function NewRecipeScreen() {
     const validSteps = steps.filter((step) => step.instruction.trim());
 
     if (validIngredients.length === 0) {
-      Alert.alert('Missing Ingredients', 'Please add at least one ingredient.');
+      showAlert('Missing Ingredients', 'Please add at least one ingredient.');
       return;
     }
 
     if (validSteps.length === 0) {
-      Alert.alert('Missing Steps', 'Please add at least one step.');
+      showAlert('Missing Steps', 'Please add at least one step.');
       return;
     }
 
