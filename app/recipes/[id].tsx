@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -47,28 +48,29 @@ export default function RecipeDetailScreen() {
     setRecipe(data);
   };
 
-  const handleDelete = () => {
-    Alert.alert(
-      'Delete Recipe',
-      'Are you sure you want to delete this recipe? This cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            if (!id) return;
-            setIsDeleting(true);
-            const success = await deleteRecipe(id);
-            if (success) {
-              router.replace('/(tabs)/recipes');
-            } else {
-              setIsDeleting(false);
-            }
-          },
-        },
-      ]
-    );
+  const handleDelete = async () => {
+    const confirmed = Platform.OS === 'web'
+      ? window.confirm('Are you sure you want to delete this recipe? This cannot be undone.')
+      : await new Promise<boolean>((resolve) => {
+          Alert.alert(
+            'Delete Recipe',
+            'Are you sure you want to delete this recipe? This cannot be undone.',
+            [
+              { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
+              { text: 'Delete', style: 'destructive', onPress: () => resolve(true) },
+            ]
+          );
+        });
+
+    if (!confirmed || !id) return;
+
+    setIsDeleting(true);
+    const success = await deleteRecipe(id);
+    if (success) {
+      router.replace('/(tabs)/recipes');
+    } else {
+      setIsDeleting(false);
+    }
   };
 
   if (loading && !recipe) {

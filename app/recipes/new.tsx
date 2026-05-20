@@ -6,19 +6,10 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
 } from 'react-native';
-
-const showAlert = (title: string, message: string) => {
-  if (Platform.OS === 'web') {
-    window.alert(`${title}\n\n${message}`);
-  } else {
-    showAlert(title, message);
-  }
-};
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -57,6 +48,7 @@ export default function NewRecipeScreen() {
 
   const isEditing = !!editId;
   const [isLoading, setIsLoading] = useState(isEditing);
+  const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [yields, setYields] = useState('');
@@ -141,8 +133,10 @@ export default function NewRecipeScreen() {
   };
 
   const handleSave = async () => {
+    setError(null);
+
     if (!name.trim()) {
-      showAlert('Missing Name', 'Please enter a recipe name.');
+      setError('Please enter a recipe name.');
       return;
     }
 
@@ -153,12 +147,12 @@ export default function NewRecipeScreen() {
     const validSteps = steps.filter((step) => step.instruction.trim());
 
     if (validIngredients.length === 0) {
-      showAlert('Missing Ingredients', 'Please add at least one ingredient.');
+      setError('Please add at least one ingredient.');
       return;
     }
 
     if (validSteps.length === 0) {
-      showAlert('Missing Steps', 'Please add at least one step.');
+      setError('Please add at least one step.');
       return;
     }
 
@@ -177,12 +171,18 @@ export default function NewRecipeScreen() {
       })),
     };
 
-    const recipe = isEditing
-      ? await updateRecipe(editId!, recipeData)
-      : await createRecipe(recipeData);
+    try {
+      const recipe = isEditing
+        ? await updateRecipe(editId!, recipeData)
+        : await createRecipe(recipeData);
 
-    if (recipe) {
-      router.replace(isEditing ? `/recipes/${editId}` : '/(tabs)/recipes');
+      if (recipe) {
+        router.replace(isEditing ? `/recipes/${editId}` : '/(tabs)/recipes');
+      } else {
+        setError('Failed to save recipe. Please try again.');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to save recipe');
     }
   };
 
@@ -216,6 +216,12 @@ export default function NewRecipeScreen() {
             </Text>
           </TouchableOpacity>
         </View>
+
+        {error && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        )}
 
         <ScrollView
           style={styles.scrollView}
@@ -434,5 +440,17 @@ const styles = StyleSheet.create({
   },
   sectionContent: {
     padding: 12,
+  },
+  errorContainer: {
+    backgroundColor: '#ff6b6b20',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ff6b6b40',
+  },
+  errorText: {
+    color: '#ff6b6b',
+    fontSize: 14,
+    textAlign: 'center',
   },
 });
